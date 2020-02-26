@@ -16,7 +16,7 @@ cc.Class({
 
     onLoad () {
         let windowSize=cc.view.getVisibleSize();  // 获取手机窗口大小
-        this.node.setPosition (windowSize.width / 7 * 2, -60, 0); // 设置游戏按钮位置
+        this.node.setPosition (windowSize.width / 7 * 2, -160, 0); // 设置游戏按钮位置
 
         this.BG.opacity = 0;
         this.Label.node.color = cc.color (255, 255, 255, 255); // 初始化按钮节点
