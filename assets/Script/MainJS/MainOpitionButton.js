@@ -12,6 +12,10 @@ cc.Class({
             default : null,
             type : cc.Label
         },
+        OptionTable : {
+            default : null,
+            type : cc.Node
+        },
     },
 
     onLoad () {
@@ -24,6 +28,7 @@ cc.Class({
         this.node.on ("touchstart", this.OnTouchStart, this);
         this.node.on ("touchcancel", this.OnTouchCancel, this);
         this.node.on ("touchend", this.OnTouchEnd, this);
+
     },
 
     start () {
@@ -33,16 +38,21 @@ cc.Class({
     OnTouchStart () {
         this.BG.opacity = 100;
         this.Label.node.color = cc.color (0, 0, 0, 0);
+
+        this.OptionTable.setPosition (0, 0); // Let OptionTable Show in View
+        cc.director.emit ("OptionUsed", "Option is Used which should be placed in center and play animation"); // Tell Option Table : You have been Used
     },
 
     OnTouchCancel () {
         this.BG.opacity = 0;
         this.Label.node.color = cc.color (255, 255, 255, 255);
+
     },
 
     OnTouchEnd () {
         this.BG.opacity = 0;
         this.Label.node.color = cc.color (255, 255, 255, 255);
+
     },
 
     // update (dt) {},
