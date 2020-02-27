@@ -29,6 +29,11 @@ cc.Class({
         this.node.on ("touchcancel", this.OnTouchCancel, this);
         this.node.on ("touchend", this.OnTouchEnd, this);
 
+        let DISABLE = false;
+
+        cc.director.on ("OptionIsClosed", function () {
+            this.DISABLE = false;    
+        }, this);
     },
 
     start () {
@@ -36,20 +41,28 @@ cc.Class({
     },
 
     OnTouchStart () {
+        if (this.DISABLE) {return;} // Option Button is disable
         this.BG.opacity = 100;
         this.Label.node.color = cc.color (0, 0, 0, 0);
 
         this.OptionTable.setPosition (0, 0); // Let OptionTable Show in View
         cc.director.emit ("OptionUsed", "Option is Used which should be placed in center and play animation"); // Tell Option Table : You have been Used
+
+        // Option Table is used, Option Button is disable
+        this.DISABLE = true;
     },
 
     OnTouchCancel () {
+        //if (this.DISABLE) {return;}
+
         this.BG.opacity = 0;
         this.Label.node.color = cc.color (255, 255, 255, 255);
 
     },
 
     OnTouchEnd () {
+        //if (this.DISABLE) {return;}
+
         this.BG.opacity = 0;
         this.Label.node.color = cc.color (255, 255, 255, 255);
 

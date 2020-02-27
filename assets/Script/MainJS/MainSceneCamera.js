@@ -16,13 +16,14 @@ cc.Class({
         cc.view.enableAntiAlias(true);
         cc.view.resizeWithBrowserSize(true);
 
-        /*
+        
         //获取全局播放器
         var audioPlay = cc.find ("Audio").getComponent ("AudioManagerJS");
         
         //停止再开启背景音乐
         audioPlay.stopBgMusic();
         audioPlay.playBgMusic();
+
         /* */
 
     },
