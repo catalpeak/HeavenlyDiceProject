@@ -6,6 +6,16 @@ cc.Class({
             type : cc.AudioClip,
             default: null
         },
+
+        ButtonMusic : {
+            type : cc.AudioClip,
+            default : null
+        },
+
+        EffecMusicVolume : {
+            default : null,
+            type : cc.Slider
+        },
     },
 
     onLoad() {
@@ -19,7 +29,26 @@ cc.Class({
     },
     /* */
 
-    playBgMusic() {
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////// Effect Functions ////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    playEffectMusic_Button () {
+        this.effectMusicChannel = cc.audioEngine.play (this.ButtonMusic, false, this.EffecMusicVolume.progress);
+    },
+
+    setEffectVoice (_volume) {
+        if (_volume >= 0.0 && _volume <= 1.0) {
+            this.EffecMusicVolume.progress = _volume;
+        } else {
+            cc.log ("In Function AudioManagerJS.js : Function setEffectvoice paramter _volume is illegal");
+        }
+    },
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////// BGM Functions /////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    playBgMusic () {
        this.bgMusicChannel = cc.audioEngine.play(this.bgMusic,true,0.5)
     },
 
