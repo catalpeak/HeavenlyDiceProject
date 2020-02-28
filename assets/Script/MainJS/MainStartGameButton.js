@@ -56,6 +56,8 @@ cc.Class({
         cc.find ("Audio").getComponent ("AudioManagerJS").playEffectMusic_Button ();
         this.BG.opacity = 100;
         this.Label.node.color = cc.color (0, 0, 0, 0);
+        
+        cc.director.loadScene ("Game");
     },
 
     OnTouchCancel () {
