@@ -35,6 +35,14 @@ cc.Class({
         cc.director.on ("OptionIsClosed", function () { // Cancel Button Lock
             this.DISABLE = false;    
         }, this);
+
+        cc.director.on ("DevelopMenu", function () {
+            this.DISABLE = true;
+        }, this);
+
+        cc.director.on ("DevelopMenuIsClosed", function () {
+            this.DISABLE = false;
+        }, this);
     },
 
     //start () {    },
@@ -45,6 +53,10 @@ cc.Class({
 
     OnTouchStart () {
         if (this.DISABLE) {return;}
+
+        // Play Music Effect
+        cc.find ("Audio").getComponent ("AudioManagerJS").playEffectMusic_Button ();
+
         this.BG.opacity = 100;
         this.Label.node.color = cc.color (0, 0, 0, 0);
 

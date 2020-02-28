@@ -12,6 +12,10 @@ cc.Class({
             default : null,
             type : cc.Label
         },
+        DevelopMenu : {
+            default : null,
+            type : cc.Node
+        },
     },
 
     onLoad () {
@@ -44,18 +48,32 @@ cc.Class({
 
     OnTouchStart () {
         if (this.DISABLE) {return;}
+
+        // Play Music Effect
+        cc.find ("Audio").getComponent ("AudioManagerJS").playEffectMusic_Button ();
+
         this.BG.opacity = 100;
         this.Label.node.color = cc.color (0, 0, 0, 0);
+
+        // Open Develop Menu
+        this.DevelopMenu.setPosition (0, 0);
+        cc.director.emit ("DevelopMenu", "Develop Menu is used and show in the middle of view");
+        this.DISABLE = true;
+
+        cc.director.on ("DevelopMenuIsClosed", function () {
+            this.DISABLE = false;
+        }, this);
+
     },
 
     OnTouchCancel () {
-        if (this.DISABLE) {return;}
+        //if (this.DISABLE) {return;}
         this.BG.opacity = 0;
         this.Label.node.color = cc.color (255, 255, 255, 255);
     },
 
     OnTouchEnd () {
-        if (this.DISABLE) {return;}
+        //if (this.DISABLE) {return;}
         this.BG.opacity = 0;
         this.Label.node.color = cc.color (255, 255, 255, 255);
     },

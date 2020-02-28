@@ -31,6 +31,14 @@ cc.Class({
         cc.director.on ("OptionIsClosed", function () { // Cancel Button Lock
             this.DISABLE = false;    
         }, this);
+
+        cc.director.on ("DevelopMenu", function () {
+            this.DISABLE = true;
+        }, this);
+
+        cc.director.on ("DevelopMenuIsClosed", function () {
+            this.DISABLE = false;
+        }, this);
     },
 
     start () {

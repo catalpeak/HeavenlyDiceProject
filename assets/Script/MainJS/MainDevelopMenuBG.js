@@ -1,3 +1,4 @@
+// Copy from Option JS
 
 cc.Class({
     extends: cc.Component,
@@ -14,7 +15,7 @@ cc.Class({
 
         var anim = this.getComponent (cc.Animation); // Get this node's Animation list
 
-        cc.director.on ('OptionUsed', function () {
+        cc.director.on ('DevelopMenu', function () {
             anim.play ("OptionDown");
             this.node.setPosition (0, 0);
         }, this); // 响应Option，弹出Option窗口，锁死main的全部按钮
@@ -37,10 +38,10 @@ cc.Class({
             if (endY < -100 && Math.abs (endX) < Math.abs (endY)) { // Current Slip direction is up
                 // Option Menu Should be closed and send message to all node
 
-                cc.director.emit ("OptionIsClosed", "Option Menu is used which should be closed and tell orther nodes to interaction");
+                cc.director.emit ("DevelopMenuIsClosed", "Develop Menu is used which should be closed and tell orther nodes to interaction");
 
                 anim.play ('OptionUp');
-                this.node.setPosition (0, 2000);
+                this.node.setPosition (0, -2000);
                 //this.node.
             }
         }, this);
