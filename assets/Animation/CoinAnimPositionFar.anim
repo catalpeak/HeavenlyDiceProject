@@ -1,0 +1,99 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "CoinAnimPositionFar",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 1.5,
+  "sample": 60,
+  "speed": 2,
+  "wrapMode": 1,
+  "curveData": {
+    "comps": {
+      "cc.Sprite": {
+        "spriteFrame": [
+          {
+            "frame": 0,
+            "value": {
+              "__uuid__": "fee9f88b-3e34-425a-9a53-07d9cb7db9e2"
+            }
+          },
+          {
+            "frame": 0.25,
+            "value": {
+              "__uuid__": "7eb5e5b3-0502-45bd-8d8b-76686aaec9eb"
+            }
+          },
+          {
+            "frame": 0.75,
+            "value": {
+              "__uuid__": "fee9f88b-3e34-425a-9a53-07d9cb7db9e2"
+            }
+          },
+          {
+            "frame": 1.25,
+            "value": {
+              "__uuid__": "7eb5e5b3-0502-45bd-8d8b-76686aaec9eb"
+            }
+          }
+        ]
+      }
+    },
+    "props": {
+      "scaleY": [
+        {
+          "frame": 0,
+          "value": 1
+        },
+        {
+          "frame": 0.25,
+          "value": 0.1
+        },
+        {
+          "frame": 0.5,
+          "value": 1
+        },
+        {
+          "frame": 0.75,
+          "value": 0.1
+        },
+        {
+          "frame": 1,
+          "value": 1
+        },
+        {
+          "frame": 1.25,
+          "value": 0.1
+        },
+        {
+          "frame": 1.5,
+          "value": 1
+        }
+      ],
+      "scaleX": [
+        {
+          "frame": 0,
+          "value": 1
+        },
+        {
+          "frame": 0.75,
+          "value": 2
+        },
+        {
+          "frame": 1.5,
+          "value": 1
+        }
+      ],
+      "y": [
+        {
+          "frame": 0,
+          "value": 150
+        },
+        {
+          "frame": 1.5,
+          "value": -150
+        }
+      ]
+    }
+  },
+  "events": []
+}
