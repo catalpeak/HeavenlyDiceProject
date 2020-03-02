@@ -177,7 +177,7 @@
       "array": [
         0,
         0,
-        346.13667980731725,
+        346.3993520536269,
         0,
         0,
         0,
@@ -2076,6 +2076,9 @@
     },
     "ChooseTips": {
       "__uuid__": "ed666d95-b640-476d-addd-72e1cfef25f2"
+    },
+    "BreakOutTips": {
+      "__uuid__": "9ea395f5-6a97-4986-adfe-1df5b49082f5"
     },
     "_id": "1e9QkFHqpP4Jm46iKfTR3+"
   },

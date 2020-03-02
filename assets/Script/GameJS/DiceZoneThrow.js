@@ -144,6 +144,9 @@ let WhosTurn = true;
 
 // Set And Log Dice Number
 let DICENUMBER = 6;
+
+var CurrentDiceStatue = new Array (); // 用一个数组记录当前所有色子的点数
+// 在投掷之初装填6个，在选择后清空数组
 cc.Class({
     extends: cc.Component,
 
@@ -230,6 +233,10 @@ cc.Class({
             default : null,
             type : cc.Prefab
         },
+        BreakOutTips : {
+            default : null,
+            type : cc.Prefab
+        },
     },
 
     // LIFE-CYCLE CALLBACKS:
@@ -268,8 +275,14 @@ cc.Class({
                 }
                 DiceWithNumber.parent = this.node;
                 DiceWithNumber.setPosition (ThrowPosition [i][0], ThrowPosition [i][1]);
+
+                // Log Current Dice Number in Array
+                CurrentDiceStatue.push (chooseNumber);
             }
             this.ThrowDice (DICENUMBER, ThrowPosition);
+
+            this.TestBreakOut ();
+
         }, this);   // First Button is others
 
         cc.director.on ("ChooseSecondIsTouched", function () {
@@ -297,8 +310,13 @@ cc.Class({
                 }
                 DiceWithNumber.parent = this.node;
                 DiceWithNumber.setPosition (ThrowPosition [i][0], ThrowPosition [i][1]);
+
+                CurrentDiceStatue.push (chooseNumber);
             }
             this.ThrowDice (DICENUMBER, ThrowPosition);
+
+            this.TestBreakOut ();
+
         }, this);   // First Button is Mine
 
         // Set emit on Dice choose
@@ -370,6 +388,183 @@ cc.Class({
 
     },
 
+    // 判断当前的色子中有没有得分的可能性
+    // True -> Yes / false -> No
+    HaveScore (_array) {
+        // 有单个的1或5就返回
+        for (let i = 0; i < _array.length; ++i) {
+            if (_array [i] == 1 || _array [i] == 5) {
+                return true;
+            }
+        }
+        // 判断三个以上的可能性
+        if (_array.length >= 3) {
+            for (let i = 0; i < 3; ++i) {
+                let newTempArray = new Array ();
+                newTempArray.push (_array [i]);
+                newTempArray.push (_array [i + 1]);
+                newTempArray.push (_array [i + 2]);
+                if (this.JudgeThreeDice (newTempArray) != 0) {
+                    return true;
+                }
+            }
+        }
+        // 4
+        if (_array.length >= 4) {
+            for (let i = 0; i < 4; ++i) {
+                let newTempArray = new Array ();
+                newTempArray.push (_array [i]);
+                newTempArray.push (_array [i + 1]);
+                newTempArray.push (_array [i + 2]);
+                newTempArray.push (_array [i + 3]);
+                if (this.JudgeFourDice (newTempArray) != 0) {
+                    return true;
+                }
+            }
+        }
+        // 5
+        if (_array.length >= 5) {
+            for (let i = 0; i < 5; ++i) {
+                let newTempArray = new Array ();
+                newTempArray.push (_array [i]);
+                newTempArray.push (_array [i + 1]);
+                newTempArray.push (_array [i + 2]);
+                newTempArray.push (_array [i + 3]);
+                newTempArray.push (_array [i + 4]);
+                if (this.JudgeFiveDice (newTempArray) != 0) {
+                    return true;
+                }
+            }
+        }
+        // 6
+        if (_array.length == 6) {
+                if (this.JudgeSixDice (_array) != 0) {
+                    return true;
+                }
+        }
+        return false;
+    },
+
+    TestBreakOut () {
+        if (this.HaveScore (CurrentDiceStatue)) {return;}
+        else {
+            // 清空当前色子
+            CurrentDiceStatue.splice (0, CurrentDiceStatue.length);
+            // 当前破产了
+            // 显示破产动画 等动画结束后进行下面操作
+            // 重置当前色子数组
+            // 改变回合，调用ChooseAndSkip函数的部分内容
+            let breakOutTips_M = cc.instantiate (this.BreakOutTips);
+            breakOutTips_M.parent = this.node.parent;
+            let anim = breakOutTips_M.getComponent (cc.Animation);
+            if (WhosTurn) {
+                WhosTurn = false;
+                anim.play ("BreakOutTips");
+                anim.on ("finished", function () {
+                // my Coin gives him
+                let anim1 = this.Coin.getComponent (cc.Animation);
+                anim1.play ("CoinAnimTheOtherSideFar");
+                this.GetScore_M.string = "0";
+                DICENUMBER = 6;
+                this.node.destroyAllChildren ();
+                // 生成接下来的色子
+                let ThrowPosition = this.GetThorwPosition (DICENUMBER);
+                // 随机生成相应的色子点数图片放到对应坐标上
+                for (let i = 0; i < DICENUMBER; ++i) {
+                    // 先随机一个当前要选择的点数
+                     let chooseNumber = Math.floor ((Math.random () * 6 + 1));
+                     var DiceWithNumber;
+                     if (chooseNumber == 1) {
+                        DiceWithNumber = cc.instantiate (this.Dice1);
+                  } else if (chooseNumber == 2) {
+                         DiceWithNumber = cc.instantiate (this.Dice2);
+                   } else if (chooseNumber == 3) {
+                       DiceWithNumber = cc.instantiate (this.Dice3);
+                  } else if (chooseNumber == 4) {
+                      DiceWithNumber = cc.instantiate (this.Dice4);
+                  } else if (chooseNumber == 5) {
+                      DiceWithNumber = cc.instantiate (this.Dice5);
+                  } else if (chooseNumber == 6) {
+                      DiceWithNumber = cc.instantiate (this.Dice6);
+                  } else {
+                     cc.log ("In Faction DizeZoneThrow : chooseNumber is error which is not between 1 ~ 6");
+                    }
+                  DiceWithNumber.parent = this.node;
+                  DiceWithNumber.setPosition (ThrowPosition [i][0], ThrowPosition [i][1]);
+
+                 CurrentDiceStatue.push (chooseNumber);
+              }
+                 this.ThrowDice (DICENUMBER, ThrowPosition);
+                // 选定分数归零
+             // 选定分数清零
+             this.ChooseScore_M.string = "0";
+              this.ChooseScore_Y.string = "0";
+              this.SummaryScore_M.string = "0";
+             this.SummaryScore_Y.string = "0";
+             //色子选定数组清零
+               ChooseArray.splice (0, ChooseArray.length);
+               breakOutTips_M.destroy ();
+
+              this.TestBreakOut ();
+
+                }, this);
+            } 
+            
+            
+            else {
+                WhosTurn = true;
+                anim.play ("BreakOutTips_Y");
+                anim.on ("finished", function () {// my Coin gives him
+                    let anim2 = this.Coin.getComponent (cc.Animation);
+                    anim2.play ("CoinAnimPositionFar");
+                    this.GetScore_M.string = "0";
+                    DICENUMBER = 6;
+                    this.node.destroyAllChildren ();
+                    // 生成接下来的色子
+                    let ThrowPosition = this.GetThorwPosition (DICENUMBER);
+                    // 随机生成相应的色子点数图片放到对应坐标上
+                    for (let i = 0; i < DICENUMBER; ++i) {
+                        // 先随机一个当前要选择的点数
+                         let chooseNumber = Math.floor ((Math.random () * 6 + 1));
+                         var DiceWithNumber;
+                         if (chooseNumber == 1) {
+                            DiceWithNumber = cc.instantiate (this.Dice1);
+                      } else if (chooseNumber == 2) {
+                             DiceWithNumber = cc.instantiate (this.Dice2);
+                       } else if (chooseNumber == 3) {
+                           DiceWithNumber = cc.instantiate (this.Dice3);
+                      } else if (chooseNumber == 4) {
+                          DiceWithNumber = cc.instantiate (this.Dice4);
+                      } else if (chooseNumber == 5) {
+                          DiceWithNumber = cc.instantiate (this.Dice5);
+                      } else if (chooseNumber == 6) {
+                          DiceWithNumber = cc.instantiate (this.Dice6);
+                      } else {
+                         cc.log ("In Faction DizeZoneThrow : chooseNumber is error which is not between 1 ~ 6");
+                        }
+                      DiceWithNumber.parent = this.node;
+                      DiceWithNumber.setPosition (ThrowPosition [i][0], ThrowPosition [i][1]);
+    
+                     CurrentDiceStatue.push (chooseNumber);
+                  }
+                     this.ThrowDice (DICENUMBER, ThrowPosition);
+                    // 选定分数归零
+                 // 选定分数清零
+                 this.ChooseScore_M.string = "0";
+                  this.ChooseScore_Y.string = "0";
+                  this.SummaryScore_M.string = "0";
+                 this.SummaryScore_Y.string = "0";
+                 //色子选定数组清零
+                   ChooseArray.splice (0, ChooseArray.length);
+                   breakOutTips_M.destroy ();
+                   
+                    this.TestBreakOut ();
+              
+                }, this);
+            }
+        }
+    },
+
     ChooseAndSkip () {
         if (!WhosTurn) {return;}
         // 判断当前能不能选择并跳过
@@ -381,6 +576,8 @@ cc.Class({
             anim.play ("Tips1-MySkip");
             return ;
         }
+        // 将记录当前色子点数的数组清空，以装入新生成的新色子数
+        CurrentDiceStatue.splice (0, CurrentDiceStatue.length);
         // 硬币给对方，要判断是我给他还是他给我
         // 当前选定得分计入小结，小结分数计入得分,判断是他是我
         // 将回合改变 Mine->Others & Others -> Mine
@@ -431,6 +628,8 @@ cc.Class({
              }
              DiceWithNumber.parent = this.node;
              DiceWithNumber.setPosition (ThrowPosition [i][0], ThrowPosition [i][1]);
+
+            CurrentDiceStatue.push (chooseNumber);
          }
          this.ThrowDice (DICENUMBER, ThrowPosition);
         // 选定分数归零
@@ -441,6 +640,8 @@ cc.Class({
         this.SummaryScore_Y.string = "0";
         //色子选定数组清零
         ChooseArray.splice (0, ChooseArray.length);
+
+        this.TestBreakOut ();
     },
 
     ChooseAndSkip_other () {
@@ -453,6 +654,8 @@ cc.Class({
             anim.play ("Tips1-OtherSkip");
             return;
         }
+        // 将记录当前色子点数的数组清空，以装入新生成的新色子数
+        CurrentDiceStatue.splice (0, CurrentDiceStatue.length);
         // 硬币给对方，要判断是我给他还是他给我
         // 当前选定得分计入小结，小结分数计入得分,判断是他是我
         // 将回合改变 Mine->Others & Others -> Mine
@@ -503,6 +706,8 @@ cc.Class({
              }
              DiceWithNumber.parent = this.node;
              DiceWithNumber.setPosition (ThrowPosition [i][0], ThrowPosition [i][1]);
+
+            CurrentDiceStatue.push (chooseNumber);
          }
          this.ThrowDice (DICENUMBER, ThrowPosition);
         // 选定分数归零
@@ -513,6 +718,8 @@ cc.Class({
         this.SummaryScore_Y.string = "0";
         //色子选定数组清零
         ChooseArray.splice (0, ChooseArray.length);
+
+        this.TestBreakOut ();
     },
 
     ChooseAndThrow () {
@@ -523,11 +730,12 @@ cc.Class({
             // 多次点击提示有问题不能结束,弹出一个动画写着需要选择得分色子才能跳过的界面，播放完动画后自动消失
             let Tips = cc.instantiate (this.ChooseTips);
             Tips.parent = this.node.parent;
-            cc.log (Tips.parent);
             let anim = Tips.getComponent (cc.Animation);
             anim.play ("Tips1-MyAgain");
             return ;
         }
+        // 将记录当前色子点数的数组清空，以装入新生成的新色子数
+        CurrentDiceStatue.splice (0, CurrentDiceStatue.length);
         // 还是自己边，硬币不动
         // 当前选定得分计入小结, 还要判断是我方他方
         if (WhosTurn) { // Mine
@@ -568,6 +776,8 @@ cc.Class({
                 }
                 DiceWithNumber.parent = this.node;
                 DiceWithNumber.setPosition (ThrowPosition [i][0], ThrowPosition [i][1]);
+
+                CurrentDiceStatue.push (chooseNumber);
             }
             this.ThrowDice (DICENUMBER, ThrowPosition);
 
@@ -576,6 +786,8 @@ cc.Class({
         this.ChooseScore_Y.string = "0";
         //色子选定数组清零
         ChooseArray.splice (0, ChooseArray.length);
+
+        this.TestBreakOut ();
     },
 
     ChooseAndThrow_other () {
@@ -588,6 +800,8 @@ cc.Class({
             anim.play ("Tips1-OtherAgain");
             return;
         }
+        // 将记录当前色子点数的数组清空，以装入新生成的新色子数
+        CurrentDiceStatue.splice (0, CurrentDiceStatue.length);
         // 还是自己边，硬币不动
         // 当前选定得分计入小结, 还要判断是我方他方
         if (WhosTurn) { // Mine
@@ -628,6 +842,8 @@ cc.Class({
                 }
                 DiceWithNumber.parent = this.node;
                 DiceWithNumber.setPosition (ThrowPosition [i][0], ThrowPosition [i][1]);
+
+                CurrentDiceStatue.push (chooseNumber);
             }
             this.ThrowDice (DICENUMBER, ThrowPosition);
 
@@ -636,14 +852,16 @@ cc.Class({
         this.ChooseScore_Y.string = "0";
         //色子选定数组清零
         ChooseArray.splice (0, ChooseArray.length);
+
+        this.TestBreakOut ();
     },
 
     // Turn --- ture -> Mine / false -> other
     ChooseDice () {
         if (WhosTurn) { // Mine
-            this.ChooseScore_M.string = this.DiceScoreChoosed ();
+            this.ChooseScore_M.string = this.DiceScoreChoosed (ChooseArray);
         } else { // Others
-            this.ChooseScore_Y.string = this.DiceScoreChoosed ();
+            this.ChooseScore_Y.string = this.DiceScoreChoosed (ChooseArray);
         }
     },
 
@@ -727,27 +945,27 @@ cc.Class({
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     // Calculate Choose Dices Score
     // @brief Return 当前选中色子所代表的分数 ，使用色子数组的长度作为选择参数 
-    DiceScoreChoosed () {
+    DiceScoreChoosed (_array) {
     
         // 选择算分函数根据色子的个数
-        if (ChooseArray.length <= 2) {
-            return this.JudgeTwoDice (ChooseArray);
+        if (_array.length <= 2) {
+            return this.JudgeTwoDice (_array);
         } 
 
-         if (ChooseArray.length == 3) {
-            return this.JudgeThreeDice (ChooseArray);
+         if (_array.length == 3) {
+            return this.JudgeThreeDice (_array);
         } 
         
-         if (ChooseArray.length == 4) {
-            return this.JudgeFourDice (ChooseArray);
+         if (_array.length == 4) {
+            return this.JudgeFourDice (_array);
         } 
 
-         if (ChooseArray.length == 5) {
-            return this.JudgeFiveDice (ChooseArray);
+         if (_array.length == 5) {
+            return this.JudgeFiveDice (_array);
         } 
 
-         if (ChooseArray.length == 6) {
-            return this.JudgeSixDice (ChooseArray);
+         if (_array.length == 6) {
+            return this.JudgeSixDice (_array);
         }
         /** */
     },
