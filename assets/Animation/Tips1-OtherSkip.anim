@@ -1,0 +1,63 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "Tips1-OtherSkip",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.5833333333333334,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 36,
+  "curveData": {
+    "props": {
+      "y": [
+        {
+          "frame": 0,
+          "value": 161.828
+        },
+        {
+          "frame": 0.21666666666666667,
+          "value": 202.078
+        },
+        {
+          "frame": 0.4,
+          "value": 224.372
+        },
+        {
+          "frame": 0.5833333333333334,
+          "value": 267.332
+        }
+      ],
+      "opacity": [
+        {
+          "frame": 0,
+          "value": 0
+        },
+        {
+          "frame": 0.21666666666666667,
+          "value": 200
+        },
+        {
+          "frame": 0.4,
+          "value": 200
+        },
+        {
+          "frame": 0.5833333333333334,
+          "value": 0
+        }
+      ],
+      "x": [
+        {
+          "frame": 0.5833333333333334,
+          "value": 112.619
+        }
+      ],
+      "angle": [
+        {
+          "frame": 0.5833333333333334,
+          "value": 180
+        }
+      ]
+    }
+  },
+  "events": []
+}

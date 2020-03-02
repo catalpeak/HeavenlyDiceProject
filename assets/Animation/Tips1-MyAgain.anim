@@ -1,0 +1,69 @@
+{
+  "__type__": "cc.AnimationClip",
+  "_name": "Tips1-MySkip",
+  "_objFlags": 0,
+  "_native": "",
+  "_duration": 0.5833333333333334,
+  "sample": 60,
+  "speed": 1,
+  "wrapMode": 1,
+  "curveData": {
+    "props": {
+      "y": [
+        {
+          "frame": 0,
+          "value": -260.573
+        },
+        {
+          "frame": 0.21666666666666667,
+          "value": -227.9
+        },
+        {
+          "frame": 0.4,
+          "value": -209.587
+        },
+        {
+          "frame": 0.5833333333333334,
+          "value": -168.255
+        }
+      ],
+      "opacity": [
+        {
+          "frame": 0,
+          "value": 0
+        },
+        {
+          "frame": 0.21666666666666667,
+          "value": 200
+        },
+        {
+          "frame": 0.4,
+          "value": 200
+        },
+        {
+          "frame": 0.5833333333333334,
+          "value": 0
+        }
+      ],
+      "x": [
+        {
+          "frame": 0,
+          "value": 76
+        },
+        {
+          "frame": 0.21666666666666667,
+          "value": 76
+        },
+        {
+          "frame": 0.4,
+          "value": 76
+        },
+        {
+          "frame": 0.5833333333333334,
+          "value": 76
+        }
+      ]
+    }
+  },
+  "events": []
+}
