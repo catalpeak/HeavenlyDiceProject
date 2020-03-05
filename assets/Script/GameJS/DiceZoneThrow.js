@@ -147,6 +147,9 @@ let DICENUMBER = 6;
 
 var CurrentDiceStatue = new Array (); // 用一个数组记录当前所有色子的点数
 // 在投掷之初装填6个，在选择后清空数组
+
+// 设定胜利的分数
+var WinScore = 4000;
 cc.Class({
     extends: cc.Component,
 
@@ -234,6 +237,10 @@ cc.Class({
             type : cc.Prefab
         },
         BreakOutTips : {
+            default : null,
+            type : cc.Prefab
+        },
+        WinMenu : {
             default : null,
             type : cc.Prefab
         },
@@ -381,7 +388,7 @@ cc.Class({
             this.CancelDice (6);
             this.ChooseDice ();
         }, this);
- 
+        
     },
 
     start () {
@@ -464,7 +471,6 @@ cc.Class({
                 // my Coin gives him
                 let anim1 = this.Coin.getComponent (cc.Animation);
                 anim1.play ("CoinAnimTheOtherSideFar");
-                this.GetScore_M.string = "0";
                 DICENUMBER = 6;
                 this.node.destroyAllChildren ();
                 // 生成接下来的色子
@@ -496,11 +502,9 @@ cc.Class({
               }
                  this.ThrowDice (DICENUMBER, ThrowPosition);
                 // 选定分数归零
+            this.ChooseScore_M.string = "0";
+            this.SummaryScore_M.string = "0";
              // 选定分数清零
-             this.ChooseScore_M.string = "0";
-              this.ChooseScore_Y.string = "0";
-              this.SummaryScore_M.string = "0";
-             this.SummaryScore_Y.string = "0";
              //色子选定数组清零
                ChooseArray.splice (0, ChooseArray.length);
                breakOutTips_M.destroy ();
@@ -517,7 +521,6 @@ cc.Class({
                 anim.on ("finished", function () {// my Coin gives him
                     let anim2 = this.Coin.getComponent (cc.Animation);
                     anim2.play ("CoinAnimPositionFar");
-                    this.GetScore_M.string = "0";
                     DICENUMBER = 6;
                     this.node.destroyAllChildren ();
                     // 生成接下来的色子
@@ -550,9 +553,7 @@ cc.Class({
                      this.ThrowDice (DICENUMBER, ThrowPosition);
                     // 选定分数归零
                  // 选定分数清零
-                 this.ChooseScore_M.string = "0";
                   this.ChooseScore_Y.string = "0";
-                  this.SummaryScore_M.string = "0";
                  this.SummaryScore_Y.string = "0";
                  //色子选定数组清零
                    ChooseArray.splice (0, ChooseArray.length);
@@ -562,6 +563,18 @@ cc.Class({
               
                 }, this);
             }
+        }
+    },
+
+    WinFunction (_Turn) {
+        if (_Turn) { // My Turn
+            var _winMenu = cc.instantiate (this.WinMenu);
+            _winMenu.parent = this.node.parent.parent;
+            _winMenu.setRotation (180);
+            cc.log ("I Win");
+        } else { // His Turn
+            var _winMenu = cc.instantiate (this.WinMenu);
+            _winMenu.parent = this.node.parent.parent;
         }
     },
 
@@ -576,6 +589,7 @@ cc.Class({
             anim.play ("Tips1-MySkip");
             return ;
         }
+
         // 将记录当前色子点数的数组清空，以装入新生成的新色子数
         CurrentDiceStatue.splice (0, CurrentDiceStatue.length);
         // 硬币给对方，要判断是我给他还是他给我
@@ -598,6 +612,11 @@ cc.Class({
             this.SummaryScore_Y.string = parseInt (this.ChooseScore_Y.string) + parseInt (this.SummaryScore_Y.string);
             this.GetScore_Y.string = parseInt (this.GetScore_Y.string) + parseInt (this.SummaryScore_Y.string);
         }
+
+        if (parseInt (this.GetScore_M.string) >= WinScore ) {
+            this.WinFunction (true);
+        }
+
         // 重置色子个数为6，继续投掷色子
         DICENUMBER = 6;
         // 销毁当前界面上全部色子
@@ -654,6 +673,7 @@ cc.Class({
             anim.play ("Tips1-OtherSkip");
             return;
         }
+
         // 将记录当前色子点数的数组清空，以装入新生成的新色子数
         CurrentDiceStatue.splice (0, CurrentDiceStatue.length);
         // 硬币给对方，要判断是我给他还是他给我
@@ -676,6 +696,12 @@ cc.Class({
             this.SummaryScore_Y.string = parseInt (this.ChooseScore_Y.string) + parseInt (this.SummaryScore_Y.string);
             this.GetScore_Y.string = parseInt (this.GetScore_Y.string) + parseInt (this.SummaryScore_Y.string);
         }
+
+        // 胜利判定 当总分达到目标分数，就胜利 这个函数就是对方获胜
+        if (parseInt (this.GetScore_Y.string) >= WinScore ) {
+            this.WinFunction (false);
+        }
+
         // 重置色子个数为6，继续投掷色子
         DICENUMBER = 6;
         // 销毁当前界面上全部色子
@@ -744,12 +770,10 @@ cc.Class({
             this.SummaryScore_Y.string = parseInt (this.ChooseScore_Y.string) + parseInt (this.SummaryScore_Y.string);
         }
         // 记录色子个数，继续投掷色子
-        if (ChooseArray.length == 6) {
-            DICENUMBER = 6; // 若是所有色子都被选走则重置色子
-        } else {
-            DICENUMBER -= ChooseArray.length;
+        DICENUMBER -= ChooseArray.length;
+        if (DICENUMBER == 0) {
+            DICENUMBER = 6;
         }
-
         // 销毁当前界面上全部色子
         this.node.destroyAllChildren ();
         // 生成接下来的色子
@@ -810,10 +834,9 @@ cc.Class({
             this.SummaryScore_Y.string = parseInt (this.ChooseScore_Y.string) + parseInt (this.SummaryScore_Y.string);
         }
         // 记录色子个数，继续投掷色子
-        if (ChooseArray.length == 6) {
-            DICENUMBER = 6; // 若是所有色子都被选走则重置色子
-        } else {
-            DICENUMBER -= ChooseArray.length;
+        DICENUMBER -= ChooseArray.length;
+        if (DICENUMBER == 0) {
+            DICENUMBER = 6;
         }
 
         // 销毁当前界面上全部色子
